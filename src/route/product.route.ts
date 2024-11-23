@@ -11,4 +11,8 @@ productRouter.post("/create-product", productController.createProduct);
 // Endpoint to get all products
 productRouter.get("/", productController.getAllProducts);
 
+productRouter.get("/:productId", productController.getProductById);
+productRouter.put("/:productId", productController.updateProduct);
+productRouter.delete("/:productId", productController.deleteProduct);
+
 export default productRouter;
