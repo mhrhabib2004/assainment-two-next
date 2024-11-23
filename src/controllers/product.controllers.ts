@@ -4,14 +4,22 @@ import { Request, Response } from "express";
 import ProductModel from "../model/product/product.model";
 
 const createProduct = async (req:Request,res:Response)=>{
+   try {
     const paylod = req.body
-     const resut = await ProductModel.create(paylod)
-     res.json({
-        message: "Product created successfully",
-        success: true,
-        data : resut
+    const resut = await ProductModel.create(paylod)
+    res.json({
+       message: "Product created successfully",
+       success: true,
+       data : resut
 
-     })
+    })
+   } catch (error) {
+    res.status(500).json({
+      message: "Failed to retrieve products",
+      status: false,
+      error : error instanceof Error ? error.stack : error
+    });
+   }
 }
 
 // export const productController = {
@@ -56,7 +64,7 @@ export const getAllProducts = async (req: Request, res: Response) => {
 
   // Controller to get a specific product by ID
 
-  export const getProductById = async (req:Request,res:Response) =>{
+  export const getProductById = async (req:Request,res:Response) => {
     try {
         const {productId } = req.params;
         const product = await ProductModel.findById(productId);
