@@ -1,8 +1,14 @@
+
+
 import { Router } from "express";
 import { productController } from "../controllers/product.controllers";
 
-const productRouter = Router()
+const productRouter = Router();
 
-productRouter.post("/create-product", productController.createProduct)
+// Endpoint to create a new product
+productRouter.post("/create-product", productController.createProduct);
 
-export default productRouter
+// Endpoint to get all products
+productRouter.get("/", productController.getAllProducts);
+
+export default productRouter;
