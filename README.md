@@ -21,7 +21,6 @@ A full-featured stationery shop application that allows users to manage products
 - **MongoDB**: NoSQL database to store product and order information.
 - **Mongoose**: ODM for MongoDB to interact with the database.
 - **TypeScript**: Superset of JavaScript that provides type checking and advanced features.
-- **JWT (JSON Web Tokens)**: For secure user authentication (if added in the future).
 - **Aggregation Pipeline**: To calculate total revenue from all orders.
 
 ## Setup Instructions
@@ -38,5 +37,5 @@ Ensure the following tools are installed:
 Clone the repository to your local machine using the following command:
 
 ```bash
-git clone https://github.com/your-username/stationery-shop.git
-cd stationery-shop
+git https://github.com/mhrhabib2004/assainment-two-next.git
+cd assainment-two
