@@ -80,7 +80,31 @@ try {
           },
         },
       },
+
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: "$totalRevenue" },
+        },
+      },
    ])
+
+     // Check if revenue data exists
+     if (revenueData.length === 0) {
+        return res.status(200).json({
+          message: "No orders found",
+          status: true,
+          data: { totalRevenue: 0 },
+        });
+      } 
+       // Response with total revenue
+    res.status(200).json({
+        message: "Revenue calculated successfully",
+        status: true,
+        data: {
+          totalRevenue: revenueData[0].totalRevenue, 
+        },
+      });
 } catch (error: eny) {
     res.status(500).json({
         message: "Failed to calculate revenue",
