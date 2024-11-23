@@ -1,11 +1,21 @@
-import express, { Request, Response } from "express"
+import express, { Request, Response } from "express";
+import productRouter from "./route/product.route";
 
-const app = express()
-app.get('/',(req:Request,res:Response)=>{
-res.send({
-    status:true,
-    massage:"server is live"
-})
-})
+const app = express();
 
-export default app
+// Middleware
+app.use(express.json()); // To parse JSON bodies
+
+// Routes
+app.use("/api/products", productRouter);
+
+// Root route
+app.get("/", (req: Request, res: Response) => {
+  res.send({
+    status: true,
+    message: "Server is live",
+  });
+});
+
+export default app;
+
