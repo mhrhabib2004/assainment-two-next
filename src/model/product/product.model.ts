@@ -1,14 +1,15 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 // Define Category Enum
-enum Category {
+/* eslint-disable no-unused-vars */
+enum Category  {
   Writing = "Writing",
   OfficeSupplies = "Office Supplies",
   ArtSupplies = "Art Supplies",
   Educational = "Educational",
   Technology = "Technology",
 }
-
+ 
 // Define the IProduct Interface
 interface IProduct extends Document {
   name: string;

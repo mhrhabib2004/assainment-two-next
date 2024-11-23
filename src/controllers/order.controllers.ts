@@ -44,11 +44,11 @@ export const createOrder = async (req: Request, res: Response) => {
             data: newOrder,
           });
       
-    } catch (error:any) {
+    } catch (error) {
         res.status(500).json({
             message: "Failed to create order",
             status: false,
-            error: error.message,
+            error: error instanceof Error ? error.stack : error
           });
     }
 }
@@ -105,11 +105,11 @@ try {
           totalRevenue: revenueData[0].totalRevenue, 
         },
       });
-} catch (error: eny) {
+} catch (error) {
     res.status(500).json({
         message: "Failed to calculate revenue",
         status: false,
-        error: error.message,
+        error: error instanceof Error ? error.stack : error
       });
     
 }

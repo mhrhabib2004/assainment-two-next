@@ -45,11 +45,11 @@ export const getAllProducts = async (req: Request, res: Response) => {
         status: true,
         data: products,
       });
-    } catch (error: any) {
+    } catch (error) {
       res.status(500).json({
         message: "Failed to retrieve products",
         status: false,
-        error: error.message,
+        error : error instanceof Error ? error.stack : error
       });
     }
   };
@@ -74,11 +74,11 @@ export const getAllProducts = async (req: Request, res: Response) => {
             data: product,
           });
 
-    } catch (error : any) {
+    } catch (error) {
         res.status(500).json({
             message: "Failed to retrieve product",
             status: false,
-            error: error.message,
+            error: error instanceof Error ? error.stack : error,
         })
     }
   }
@@ -110,11 +110,11 @@ export const getAllProducts = async (req: Request, res: Response) => {
             data: updatedProduct,
           });
 
-    } catch (error:any) {
+    } catch (error) {
         res.status(500).json({
             message: "Failed to update product",
             status: false,
-            error: error.message,
+            error: error instanceof Error ? error.stack : error
         })
     }
   }
@@ -136,11 +136,11 @@ export const getAllProducts = async (req: Request, res: Response) => {
             message: "Product deleted successfully",
             status: true,
             data: {},});
-    } catch (error : any) {
+    } catch (error ) {
         res.status(500).json({
             message: "Failed to update product",
             status: false,
-            error: error.message,
+            error: error instanceof Error ? error.stack : error
         })
     }
 
