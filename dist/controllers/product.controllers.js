@@ -15,13 +15,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.productController = exports.deleteProduct = exports.updateProduct = exports.getProductById = exports.getAllProducts = void 0;
 const product_model_1 = __importDefault(require("../model/product/product.model"));
 const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const paylod = req.body;
-    const resut = yield product_model_1.default.create(paylod);
-    res.json({
-        message: "Product created successfully",
-        success: true,
-        data: resut
-    });
+    try {
+        const paylod = req.body;
+        const resut = yield product_model_1.default.create(paylod);
+        res.json({
+            message: "Product created successfully",
+            success: true,
+            data: resut
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            message: "Failed to retrieve products",
+            status: false,
+            error: error instanceof Error ? error.stack : error
+        });
+    }
 });
 // export const productController = {
 // }
