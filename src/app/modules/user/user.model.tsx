@@ -78,7 +78,7 @@ userSchema.post('save', function (doc, next) {
 
 // Get specific user data for authentication
 userSchema.statics.getAuthUserData = function (userId: string) {
-    return this.findById(userId).select('+password _id name email role isBlocked');
+    return this.findById(userId).select('+password _id name email role isdeactive');
 };
 
 // Get public user data
