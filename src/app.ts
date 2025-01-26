@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import productRouter from "./route/product.route";
 import orderRouter from "./route/order.route";
-import UserRoutes from "./app/modules/user/user.route"
+import {UserRoutes} from "./app/modules/user/user.route"
 
 const app = express();
 
