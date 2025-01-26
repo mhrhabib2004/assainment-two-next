@@ -11,7 +11,7 @@ export type TUser = {
     email: string;
     password: string;
     role: 'admin' | 'user';
-    isactive: boolean;
+    isdeactive: boolean;
 };
 
 export type TUserRole = keyof typeof USER_ROLE ;
