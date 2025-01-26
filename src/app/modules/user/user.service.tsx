@@ -1,3 +1,6 @@
+import { Model, Schema } from "mongoose";
+import { TUser } from "./user.model";
+import { config } from "dotenv";
 
 // Specific filter interface data
 interface UserModel extends Model<TUser> {

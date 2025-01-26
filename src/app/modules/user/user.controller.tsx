@@ -1,3 +1,5 @@
+import catchAsync from "../../utils/catchAsync";
+
 // User Create Funtionality
 const createUser = catchAsync(async (req, res) => {
   const { user } = req.body;
