@@ -7,9 +7,12 @@ import config from "../../config"
 
 // Specific filter interface data
 interface UserModel extends Model<TUser> {
+    // eslint-disable-next-line no-unused-vars
     getAuthUserData(userId: string): Promise<TUser | null>;
+    // eslint-disable-next-line no-unused-vars
     getPublicUserData(userId: string): Promise<Pick<TUser, '_id' | 'name' | 'email'>>;
 }
+
 
 // user Model
 const userSchema = new Schema<TUser>(
