@@ -1,18 +1,14 @@
 import bcrypt from 'bcrypt';
 import { Model, model, Schema } from "mongoose";
+
+import config from '../../config';
 import { TUser } from './user.interface';
-import config from "../../config"
-
-
 
 // Specific filter interface data
 interface UserModel extends Model<TUser> {
-    // eslint-disable-next-line no-unused-vars
     getAuthUserData(userId: string): Promise<TUser | null>;
-    // eslint-disable-next-line no-unused-vars
     getPublicUserData(userId: string): Promise<Pick<TUser, '_id' | 'name' | 'email'>>;
 }
-
 
 // user Model
 const userSchema = new Schema<TUser>(
@@ -28,12 +24,12 @@ const userSchema = new Schema<TUser>(
             required: [true, 'Email is required'],
             unique: true,
             trim: true,
-            // validate: {
-            //     validator: function (value: string) {
-            //         return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(value);
-            //     },
-            //     message: '{VALUE} is not a valid email',
-            // },
+            validate: {
+                validator: function (value: string) {
+                    return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(value);
+                },
+                message: '{VALUE} is not a valid email',
+            },
             immutable: true,
         },
         password: {
@@ -81,7 +77,7 @@ userSchema.post('save', function (doc, next) {
 
 // Get specific user data for authentication
 userSchema.statics.getAuthUserData = function (userId: string) {
-    return this.findById(userId).select('+password _id name email role isdeactive');
+    return this.findById(userId).select('+password _id name email role isBlocked');
 };
 
 // Get public user data

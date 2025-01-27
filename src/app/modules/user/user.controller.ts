@@ -1,15 +1,17 @@
-import catchAsync from "../../utils/catchAsync";
+
 import httpStatus from 'http-status';
 import sendResponse from "../../utils/sendResponse";
-import { UserServices } from "./user.service";
+import catchAsync from '../../utils/catchAsync';
+import { UserServices } from './user.service';
 
 
 
 // User Create Funtionality
 const createUser = catchAsync(async (req, res) => {
-  const { user } = req.body;
-
+  const { user } = await req.body;
+console.log({user})
   const result = await UserServices.createUserIntoDB(user);
+  console.log(result)
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
