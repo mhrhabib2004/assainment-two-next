@@ -2,12 +2,15 @@ import express, { Request, Response } from "express";
 import productRouter from "./route/product.route";
 import orderRouter from "./route/order.route";
 import { AuthRoutes } from "./app/modules/auth/auth.router";
-import { AdminRoutes } from "./app/middlewares/admin/admin.route";
+import { AdminRoutes } from "./admin/admin.route";
+import cors from "cors"
 
 const app = express();
 
 // Middleware
 app.use(express.json()); // To parse JSON bodies
+
+app.use(cors({origin:'http://localhost:5173',credentials: true}))
 
 // Routes
 app.use("/api/products", productRouter);
