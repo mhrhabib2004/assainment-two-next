@@ -1,16 +1,18 @@
 import httpStatus from 'http-status';
 import { AdminServices } from "./admin.service";
-import catchAsync from "../../utils/catchAsync";
-import sendResponse from '../../utils/sendResponse';
+import catchAsync from "../app/utils/catchAsync";
+import sendResponse from '../app/utils/sendResponse';
 
 // import { AdminServices } from "./admin.service";
 
 // Blocked user
 const userDeactive = catchAsync(async (req, res) => {
 
-    const userId = req.params.userId;
+    const id = req.params._id;
 
-    await AdminServices.userDeactiveWithAdminFromDB(userId);
+    console.log(id,"ddddd");
+
+    await AdminServices.userDeactiveWithAdminFromDB(id);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
@@ -23,9 +25,10 @@ const userDeactive = catchAsync(async (req, res) => {
 // User userDeactive Route
 const userActive = catchAsync(async (req, res) => {
 
-    const userId = req.params.userId;
+    const id = req.user;
+    console.log(id)
 
-    await AdminServices.userActiveWithAdminFromDB(userId);
+    await AdminServices.userActiveWithAdminFromDB(id);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,

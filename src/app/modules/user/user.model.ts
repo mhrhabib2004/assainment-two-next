@@ -6,8 +6,8 @@ import { TUser } from './user.interface';
 
 // Specific filter interface data
 interface UserModel extends Model<TUser> {
-    getAuthUserData(userId: string): Promise<TUser | null>;
-    getPublicUserData(userId: string): Promise<Pick<TUser, '_id' | 'name' | 'email'>>;
+    getAuthUserData(_id: string): Promise<TUser | null>;
+    getPublicUserData(_id: string): Promise<Pick<TUser, '_id' | 'name' | 'email'>>;
 }
 
 // user Model

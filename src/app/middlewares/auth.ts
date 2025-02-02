@@ -30,15 +30,18 @@ const auth = (...requiredRoles: TUserRole[]) => {
             config.jwt_access_secret as string,
 
         ) as JwtPayload;
+        console.log(decoded);
 
-        const { role, userId } = decoded;
+
+        const { role,_id } = decoded;
 
         // checking if the user is exist
-        const user = await User.getAuthUserData(userId);
+        const user = await User.getAuthUserData(_id);
+        //  console.log(user)
 
 
         if (!user) {
-            throw new Error('This user is not found !')
+            throw new Error('This user is not found gtfgsghsfgf!')
         }
 
         // checking if the user is Blocked

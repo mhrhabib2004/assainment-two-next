@@ -1,13 +1,17 @@
-import { User } from "../../modules/user/user.model";
+import { User } from "../app/modules/user/user.model";
+
+
 
 // Blocked user
-const userDeactiveWithAdminFromDB = async (userId: string) => {
+const userDeactiveWithAdminFromDB = async (_id: string) => {
 
-    const user = await User.findById(userId);
+    const user = await User.findById(_id);
+
+    console.log(user)
 
     // Check User Find 
     if (!user) {
-        throw new Error('This user is not found !')
+        throw new Error('This user is not found ytyyuy !')
     }
 
     // Check User Admin
@@ -20,8 +24,8 @@ const userDeactiveWithAdminFromDB = async (userId: string) => {
         throw new Error('User is already Deactive!')
     }
 
-    const result = await User.findOneAndUpdate(
-        { _id: userId },
+    const result = await User.findByIdAndUpdate(
+        { _id: _id },
         { isdeactive: true },
         {
             new: true,
@@ -31,9 +35,9 @@ const userDeactiveWithAdminFromDB = async (userId: string) => {
 };
 
 // unBlocked user
-const userActiveWithAdminFromDB = async (userId: string) => {
+const userActiveWithAdminFromDB = async (_id: string) => {
 
-    const user = await User.findById(userId);
+    const user = await User.findById(_id);
 
     // Check User Find 
     if (!user) {
@@ -50,8 +54,8 @@ const userActiveWithAdminFromDB = async (userId: string) => {
         throw new Error('User is already Deactive!')
     }
 
-    const result = await User.findOneAndUpdate(
-        { _id: userId },
+    const result = await User.findByIdAndUpdate(
+        { _id: _id },
         { isdeactive: false },
         {
             new: true,
