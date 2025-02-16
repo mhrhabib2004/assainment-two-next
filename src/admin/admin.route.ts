@@ -4,11 +4,11 @@ import auth from '../app/middlewares/auth';
 import { USER_ROLE } from '../app/modules/user/user.consatnt';
 
 
-const router = express.Router();
+const router = express.Router(); 
 
 // User Blocked Route
 router.patch(
-    '/users/:id/deactive', auth(USER_ROLE.admin),  AdminControllers.userDeactive,
+    '/users/:userId/deactive', auth(USER_ROLE.admin),  AdminControllers.userDeactive,
 );
 
 // User unBlocked Route
