@@ -4,21 +4,20 @@ import auth from '../app/middlewares/auth';
 import { USER_ROLE } from '../app/modules/user/user.consatnt';
 
 
-const router = express.Router(); 
+const router = express.Router();
 
-// User Blocked Route
+// Block User Route
 router.patch(
-    '/users/:userId/deactive', auth(USER_ROLE.admin),  AdminControllers.userDeactive,
+    '/users/:userId/deactive', 
+    auth(USER_ROLE.admin),  
+    AdminControllers.userDeactive
 );
 
-// User unBlocked Route
+// Unblock User Route
 router.patch(
-    '/users/:userId/active', auth(USER_ROLE.admin), AdminControllers.userActive,
+    '/users/:userId/active', 
+    auth(USER_ROLE.admin), 
+    AdminControllers.userActive
 );
-
-// // Delete Blog by Admin Route
-// router.delete(
-//     '/blogs/:id', auth(USER_ROLE.admin), AdminControllers.deleteBlogByAdmin,
-// );
 
 export const AdminRoutes = router;
