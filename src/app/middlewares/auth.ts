@@ -1,18 +1,15 @@
 import config from "../config";
 import { TUserRole } from "../modules/user/user.interface";
 import { User } from "../modules/user/user.model";
-// import { TUserRole } from "../modules/user/user.interface";
-// import { User } from "../modules/user/user.model";
-// import catchAsync from "../utils/catchAsync"
+import catchAsync from "../utils/catchAsync"
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import catchAsync from "../utils/catchAsync";
 
 
 const auth = (...requiredRoles: TUserRole[]) => {
     return catchAsync(async (req, res, next) => {
 
         // const bearerToken = req.headers.authorization;
-        // console.log(bearerToken);
+        // console.log(bearerToken,'gg');
         
         
         const token = req.headers.authorization?.split(' ')[1];
@@ -30,22 +27,21 @@ const auth = (...requiredRoles: TUserRole[]) => {
             config.jwt_access_secret as string,
 
         ) as JwtPayload;
-        console.log(decoded);
 
-
-        const { role,_id } = decoded;
+        const { role, userId } = decoded;
 
         // checking if the user is exist
-        const user = await User.getAuthUserData(_id);
-        //  console.log(user)
-
+        const user = await User.getAuthUserData(userId);
+console.log(user);
 
         if (!user) {
-            throw new Error('This user is not found gtfgsghsfgf!')
+            throw new Error('This user is not found !')
         }
 
         // checking if the user is Blocked
-        const  isdeactive= user?.isdeactive
+        const isdeactive= user?.isdeactive
+
+        console.log(isdeactive,'ggg');
 
         if (isdeactive!) {
             throw new Error('This user is blocked !')

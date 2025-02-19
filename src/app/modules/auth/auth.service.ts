@@ -1,10 +1,13 @@
 
+
+
 import bcrypt from 'bcrypt';
 import { createToken } from "./auth.utils";
-import { User } from "../user/user.model";
-import { TUser } from "../user/user.interface";
+import { TUser } from '../user/user.interface';
+import { User } from '../user/user.model';
 import config from '../../config';
-// import { createToken } from "./auth.utils";
+
+
 
 
 // User Register function
@@ -26,7 +29,7 @@ const loginUserWithDB = async (payload: { email: string; password: string }) => 
     }
 
     // checking if the user is Blocked
-    const isdeactive= user?.isdeactive
+    const isdeactive = user?.isdeactive
 
     if (isdeactive) {
         throw new Error('This user is deactive! !')

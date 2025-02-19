@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import bcrypt from 'bcrypt';
 import { Model, model, Schema } from "mongoose";
 
@@ -6,10 +7,10 @@ import { TUser } from './user.interface';
 
 // Specific filter interface data
 interface UserModel extends Model<TUser> {
-    getAuthUserData(_id: string): Promise<TUser | null>;
-    getPublicUserData(_id: string): Promise<Pick<TUser, '_id' | 'name' | 'email'>>;
+    getAuthUserData(userId:string): Promise<TUser | null>;
+    getPublicUserData(userId:string): Promise<Pick<TUser, '_id' | 'name' | 'email'>>;
 }
-
+                                           
 // user Model
 const userSchema = new Schema<TUser>(
     {

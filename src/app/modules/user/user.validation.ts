@@ -9,7 +9,7 @@ const userValidationSchema = z.object({
     body: z.object({
         
         name: z.string({ required_error: "Name must be a string" })
-            .max(20, { message: "Name must be less than 20 characters" }),
+            .max(21, { message: "Name must be less than 20 characters" }),
 
         email: z.string({ required_error: "Please Inpute your Email" }).email(),
 
