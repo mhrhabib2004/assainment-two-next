@@ -31,7 +31,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
         const { role, userId } = decoded;
 
         // checking if the user is exist
-        const user = await User.getAuthUserData(userId);
+        const user = await User.getPublicUserData(userId);
 console.log(user);
 
         if (!user) {

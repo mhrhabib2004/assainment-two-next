@@ -1,25 +1,7 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
+import { Category, IProduct } from "./product.interface";
 
-// Define Category Enum
-/* eslint-disable no-unused-vars */
-enum Category  {
-  Writing = "Writing",
-  OfficeSupplies = "Office Supplies",
-  ArtSupplies = "Art Supplies",
-  Educational = "Educational",
-  Technology = "Technology",
-}
- 
-// Define the IProduct Interface
-interface IProduct extends Document {
-  name: string;
-  brand: string;
-  price: number;
-  category: Category;
-  description: string;
-  quantity: number;
-  inStock: boolean;
-}
+
 
 // Define the Product Schema
 const productSchema = new Schema<IProduct>(
