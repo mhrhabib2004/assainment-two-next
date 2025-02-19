@@ -14,4 +14,5 @@ export type TUser = {
     isdeactive: boolean;
 };
 
+
 export type TUserRole = keyof typeof USER_ROLE ;
