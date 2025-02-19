@@ -58,7 +58,7 @@ const loginUserWithDB = async (payload: { email: string; password: string }) => 
     );
 
     return { token };
-    return { user };
+    
 }
 
 export const AuthService = {
