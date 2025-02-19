@@ -9,7 +9,8 @@ import { UserServices } from './user.service';
 // User Create Funtionality
 const createUser = catchAsync(async (req, res) => {
   const { user } = await req.body;
-console.log({user})
+
+console.log(req.user)
   const result = await UserServices.createUserIntoDB(user);
   console.log(result)
 
