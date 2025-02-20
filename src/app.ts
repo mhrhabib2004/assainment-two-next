@@ -1,9 +1,9 @@
 import express, { Request, Response } from "express";
-import productRouter from "./route/product.route";
-import orderRouter from "./route/order.route";
 import { AuthRoutes } from "./app/modules/auth/auth.router";
 import { AdminRoutes } from "./app/admin/admin.route";
 import cors from "cors"
+import productRouter from "./app/product/product.route";
+import orderRouter from "./app/order/order.route";
 
 const app = express();
 
