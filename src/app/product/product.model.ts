@@ -14,6 +14,10 @@ const productSchema = new Schema<IProduct>(
       type: String,
       required: [true, "Brand name is required"],
     },
+    image: {
+      type: String,
+      required: [true, "Brand image is required"],
+    },
     price: {
       type: Number,
       required: [true, "Price is required"],
