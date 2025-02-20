@@ -4,6 +4,7 @@ import { AdminRoutes } from "./app/admin/admin.route";
 import cors from "cors"
 import productRouter from "./app/product/product.route";
 import orderRouter from "./app/order/order.route";
+import globalErrorHandler from "./app/middlewares/globalerrorhandler";
 
 const app = express();
 
@@ -18,7 +19,8 @@ app.use("/api/orders", orderRouter);
 app.use("/api/auth", AuthRoutes);
 app.use("/api/admin", AdminRoutes);
 
-
+// Error-handling middleware (must be added after all routes)
+app.use(globalErrorHandler);
 // Root route
 app.get("/", (req: Request, res: Response) => {
   res.send({
