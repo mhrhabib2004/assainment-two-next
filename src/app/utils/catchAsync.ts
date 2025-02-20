@@ -1,12 +1,9 @@
-/* eslint-disable no-unused-vars */
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from "express";
 
-const catchAsync = (fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) => {
-    return (req: Request, res: Response, next: NextFunction) => {
-        fn(req, res, next).catch((err) => {
-            res.status(500).json({ message: err.message || 'Internal Server Error' });
-        });
-    };
+const catchAsync = (fn: RequestHandler) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch((err) => next(err));
+  };
 };
 
 export default catchAsync;
