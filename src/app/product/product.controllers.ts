@@ -6,6 +6,7 @@ const createProduct = async (req:Request,res:Response)=>{
    try {
     const paylod = req.body
     const resut = await ProductModel.create(paylod)
+    
     res.json({
        message: "Product created successfully",
        success: true,
