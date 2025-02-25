@@ -1,51 +1,42 @@
-
-
-
 import bcrypt from 'bcrypt';
-import { createToken } from "./auth.utils";
+import { createToken } from './auth.utils';
 import { TUser } from '../user/user.interface';
 import { User } from '../user/user.model';
 import config from '../../config';
-
-
+import AppError from '../../errors/AppError';
 
 
 // User Register function
 const userRegisterDB = async (payload: TUser) => {
-    const publicUserData = await User.create(payload);
-    const result = await User.getPublicUserData(publicUserData._id);
-
-    return result
-}
+    try {
+        const publicUserData = await User.create(payload);
+        const result = await User.getPublicUserData(publicUserData._id);
+        return result;
+    } catch (error) {
+        throw new AppError(400, 'Error registering user. Please try again!');
+    }
+};
 
 // Login user
 const loginUserWithDB = async (payload: { email: string; password: string }) => {
-
-    // checking if the user is exist
+    // checking if the user exists
     const user = await User.findOne({ email: payload?.email }).select('+password');
-
     if (!user) {
-        throw new Error('This user is not found !')
+        throw new AppError(404, 'User not found!');
     }
 
-    // checking if the user is Blocked
-    const isdeactive = user?.isdeactive
-
-    if (isdeactive) {
-        throw new Error('This user is deactive! !')
+    // checking if the user is blocked
+    if (user?.isdeactive) {
+        throw new AppError(403, 'This user is deactivated!');
     }
 
-    //checking if the password is correct
-    const isPasswordMatched = await bcrypt.compare(
-        payload?.password,
-        user?.password
-    )
-
+    // checking if the password is correct
+    const isPasswordMatched = await bcrypt.compare(payload?.password, user?.password);
     if (!isPasswordMatched) {
-        throw new Error('Your Password is Wrong.   Please inpute Corect password')
+        throw new AppError(401, 'Incorrect password!');
     }
 
-    //create token and sent to the  client
+    // create token and send to the client
     const jwtPayload = {
         userId: user.id,
         role: user.role,
@@ -54,17 +45,22 @@ const loginUserWithDB = async (payload: { email: string; password: string }) => 
     const token = createToken(
         jwtPayload,
         config.jwt_access_secret as string,
-        config.jwt_access_expires_in as string,
+        config.jwt_access_expires_in as string
     );
 
-    console.log(token);
-    
-
-    return { token };
-    
-}
+    // Return token and user details
+    return {
+        token,
+        user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+        },
+    };
+};
 
 export const AuthService = {
     userRegisterDB,
-    loginUserWithDB
-}
+    loginUserWithDB,
+};
