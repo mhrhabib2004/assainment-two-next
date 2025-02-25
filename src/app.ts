@@ -3,15 +3,15 @@ import { AuthRoutes } from "./app/modules/auth/auth.router";
 import { AdminRoutes } from "./app/admin/admin.route";
 import cors from "cors"
 import productRouter from "./app/product/product.route";
-import orderRouter from "./app/order/order.route";
 import globalErrorHandler from "./app/middlewares/globalerrorhandler";
+import { orderRouter } from "./app/order/order.route";
 
 const app = express();
 
 // Middleware
 app.use(express.json()); // To parse JSON bodies
 
-app.use(cors({origin:'http://localhost:5173',credentials: true}))
+app.use(cors({origin:['http://localhost:5173'],credentials: true}))
 
 // Routes
 app.use("/api/products", productRouter);
