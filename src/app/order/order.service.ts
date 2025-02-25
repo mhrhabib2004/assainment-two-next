@@ -1,3 +1,4 @@
+
 import { Types } from 'mongoose';
 import httpStatus from 'http-status';
 import { JwtPayload } from 'jsonwebtoken';
@@ -8,6 +9,8 @@ import QueryBuilder from '../Builder/QueryBuilder';
 import AppError from '../errors/AppError';
 import ProductModel from '../product/product.model';
 import { orderUtils } from './order.utils';
+import { User } from '../modules/user/user.model';
+// import { User } from '../modules/user/user.model';
 
 const getMeOrderFromDB = async (query: Record<string, unknown>, email: string) => {
     const orders = await OrderModel.find({})
@@ -26,20 +29,26 @@ const getMeOrderFromDB = async (query: Record<string, unknown>, email: string) =
         result: await orderQuery.modelQuery,
     };
 };
-
 const createOrderIntoDB = async (
     payload: { products: { product: string; quantity: number }[] },
     user: JwtPayload,
     client_ip: string
-    
-    
 ) => {
-    console.log(user);
+    // Fetch the user from the database
+    const cuser = await User.findById(user?.userId);
+    if (!cuser || !cuser.name || !cuser.email) {
+        throw new AppError(httpStatus.BAD_REQUEST, 'User name and email are required');
+    }
+    
+    const { name, email } = cuser;
+
+    // Check if the user ID exists
     if (!user?.userId) throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+    
+    // Ensure there are products in the order
     if (!payload?.products?.length) throw new AppError(httpStatus.BAD_REQUEST, 'No products in the order');
     
-    if (!user.name) throw new AppError(httpStatus.BAD_REQUEST, 'Customer name is required'); // Check for name
-
+    // Calculate the total price and validate the products
     let totalPrice = 0;
     const productIds = payload.products.map(p => p.product);
     const dbProducts = await ProductModel.find({ _id: { $in: productIds } });
@@ -61,8 +70,10 @@ const createOrderIntoDB = async (
         return { product: new Types.ObjectId(product.product), quantity: product.quantity };
     });
 
+    // Save the updated product quantities
     await Promise.all(dbProducts.map(product => product.save()));
 
+    // Create the order in the database
     const order = await OrderModel.create({
         products: productsWithObjectId,
         user: new Types.ObjectId(user.userId),
@@ -70,36 +81,29 @@ const createOrderIntoDB = async (
         status: 'Pending',
     });
 
-    // Log the payment payload for debugging
-    console.log("Payment Payload:", {
+    // Prepare the payment payload
+    const paymentPayload = {
         amount: totalPrice,
         order_id: order._id,
         currency: "BDT",
-        customer_name: user.name, // Ensure name is passed correctly
-        customer_address: user.address || "Sylhet",
-        customer_email: user.email,
-        customer_phone: user.mobile || "01917540405",
-        customer_city: user.address || "Sylhet",
+        customer_name: name,
+        customer_address: cuser.address || "Sylhet",
+        customer_email: email,
+        customer_phone: cuser.mobile || "01917540405",
+        customer_city: cuser.address || "Sylhet",
         client_ip,
-    });
+    };
+
+    // Log the payment payload (remove or adjust for production)
+    console.log("Payment Payload:", paymentPayload);
 
     // Initiate payment and capture the response
-    const payment = await orderUtils.makePaymentAsync({
-        amount: totalPrice,
-        order_id: order._id,
-        currency: "BDT",
-        customer_name: user.name, // Ensure name is passed correctly
-        customer_address: user.address || "Sylhet",
-        customer_email: user.email,
-        customer_phone: user.mobile || "01917540405",
-        customer_city: user.address || "Sylhet",
-        client_ip,
-    });
+    const payment = await orderUtils.makePaymentAsync(paymentPayload);
 
-    // Log the payment response for debugging
+    // Log the payment response (remove or adjust for production)
     console.log("Payment Response:", payment);
 
-    // Check if the payment has a transaction status and process it
+    // Check if the payment was successful and update the order's transaction details
     if (payment?.transactionStatus) {
         order.transaction = {
             id: payment.sp_order_id,
@@ -108,18 +112,19 @@ const createOrderIntoDB = async (
         await order.save();
     }
 
-    // Ensure paymentUrl is returned, otherwise return null
+    // Ensure the payment URL is returned if available
     const paymentUrl = payment?.checkout_url || null;
+    if (!paymentUrl) {
+        throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, 'Payment URL could not be generated');
+    }
 
-    // Log paymentUrl for debugging
-    console.log("Payment URL:", paymentUrl);
-
+    // Return the order details along with the payment URL
     return {
         success: true,
         message: "Order created successfully",
         data: {
             orderDetails: order,
-            paymentUrl, // return the payment URL (null if not present)
+            paymentUrl,
         },
     };
 };
