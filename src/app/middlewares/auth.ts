@@ -8,11 +8,11 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 const auth = (...requiredRoles: TUserRole[]) => {
     return catchAsync(async (req, res, next) => {
 
-        // const bearerToken = req.headers.authorization;
-        // console.log(bearerToken,'gg');
+        const token = req.headers.authorization;
+        // console.log("ttt" , token);
         
         
-        const token = req.headers.authorization?.split(' ')[1];
+        // const token = req.headers.authorization?.split(' ')[1];
         // console.log(token);
         
 
@@ -31,8 +31,8 @@ const auth = (...requiredRoles: TUserRole[]) => {
         const { role, userId } = decoded;
 
         // checking if the user is exist
-        const user = await User.getPublicUserData(userId);
-console.log(user);
+        const user = await User.findById(userId);
+// console.log(user);
 
         if (!user) {
             throw new Error('This user is not found !')
@@ -41,7 +41,7 @@ console.log(user);
         // checking if the user is Blocked
         const isdeactive= user?.isdeactive
 
-        console.log(isdeactive,'ggg');
+        // console.log(isdeactive,'ggg');
 
         if (isdeactive!) {
             throw new Error('This user is blocked !')

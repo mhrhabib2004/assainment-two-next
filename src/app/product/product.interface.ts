@@ -16,5 +16,6 @@ export interface IProduct extends Document {
     category: Category;
     description: string;
     quantity: number;
+    isDeleted: boolean;
     inStock: boolean;
   }

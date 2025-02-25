@@ -47,6 +47,10 @@ const productSchema = new Schema<IProduct>(
       required: [true, "Quantity is required"],
       min: [0, "Quantity must be a non-negative number"], // Prevent negative quantities
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+  },
     inStock: {
       type: Boolean,
       required: [true, "In-stock status is required"],

@@ -1,117 +1,96 @@
-import { Request, Response } from "express";
-import ProductModel from "../product/product.model";
-import OrderModel from "./order.model";
+import httpStatus from "http-status";
+import catchAsync from "../utils/catchAsync";
+import sendResponse from "../utils/sendResponse";
+import { OrderService } from "./order.service";
 
+// Create Order Function
+const createOrder = catchAsync(async (req, res) => {
+    const user = req.user; // Assuming `req.user` contains the authenticated user's details
+    const clientIp = req.ip; // Get the client's IP address
 
-export const createOrder = async (req: Request, res: Response) => {
-    try {
-        const { email, product, quantity, totalPrice } = req.body;
+    const result = await OrderService.createOrderIntoDB(req.body, user, clientIp);
 
-        const foundProduct = await ProductModel.findById(product);
-        
-        if (!foundProduct) {
-            return res.status(404).json({
-              message: "Product not found",
-              status: false,
-            });
-          }
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Order created successfully',
+        data: result,
+    });
+});
 
-          if (foundProduct.quantity < quantity) {
-            return res.status(400).json({
-              message: "Insufficient stock",
-              status: false,
-            });
-          }
+// Verify Payment Function
+const verifyPayment = catchAsync(async (req, res) => {
+    const orderId = req.query.order_id as string; // Extract order_id from query params
 
+    const result = await OrderService.verifyPayment(orderId);
 
-          foundProduct.quantity -= quantity;
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Payment verified successfully',
+        data: result,
+    });
+});
 
-          if (foundProduct.quantity === 0) {
-            foundProduct.inStock = false;
-          }
+// Get All Orders Function
+const getAllOrder = catchAsync(async (req, res) => {
+    const result = await OrderService.getAllOrderFromDB(req.query);
 
-          await foundProduct.save();
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'All orders retrieved successfully',
+        data: result,
+    });
+});
 
-          const newOrder = await OrderModel.create({
-            email,
-            product,
-            quantity,
-            totalPrice,
-          })
+// Get My Orders Function
+const getMeOrder = catchAsync(async (req, res) => {
+    const userEmail = req.user?.email; // Extract email from authenticated user
 
-          res.status(201).json({
-            message: "Order created successfully",
-            status: true,
-            data: newOrder,
-          });
-      
-    } catch (error) {
-        res.status(500).json({
-            message: "Failed to create order",
-            status: false,
-            error: error instanceof Error ? error.stack : error
-          });
-    }
-}
+    const result = await OrderService.getMeOrderFromDB(req.query, userEmail);
 
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Your orders retrieved successfully',
+        data: result,
+    });
+});
 
-// calculateRevenue 
+// Delete Order Function
+const deleteOrder = catchAsync(async (req, res) => {
+    const { id } = req.params; // Extract order ID from request params
 
-export const calculateRevenue = async (req:Request,res:Response) => {
-try {
-   const revenueData = await OrderModel.aggregate([
-    {
-        $lookup : {
-            from: "products", 
-            localField: "product",
-            foreignField: "_id",
-            as: "productDetails", 
-        },
-    },
-    {
-        $unwind: "$productDetails",
-    },
-    {
-        $project: {
-          totalRevenue: {
-            $multiply: [
-              "$quantity",        
-              "$productDetails.price",         
-            ],
-          },
-        },
-      },
+    const result = await OrderService.deleteOrderFromDB(id);
 
-      {
-        $group: {
-          _id: null,
-          totalRevenue: { $sum: "$totalRevenue" },
-        },
-      },
-   ])
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Order deleted successfully',
+        data: result,
+    });
+});
 
-     // Check if revenue data exists
-     if (revenueData.length === 0) {
-        return res.status(200).json({
-          message: "No orders found",
-          status: true,
-          data: { totalRevenue: 0 },
-        });
-      } 
-       // Response with total revenue
-    res.status(200).json({
-        message: "Revenue calculated successfully",
-        status: true,
-        data: {
-          totalRevenue: revenueData[0].totalRevenue, 
-        },
-      });
-} catch (error) {
-    res.status(500).json({
-        message: "Failed to calculate revenue",
-        status: false,
-        error: error instanceof Error ? error.stack : error
-      });
-    
-}
-}
+// Update Order Function
+const updateOrder = catchAsync(async (req, res) => {
+    const { orderId } = req.params; // Extract order ID from request params
+
+    const result = await OrderService.updateOrderIntoDB(orderId, req.body);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Order updated successfully',
+        data: result,
+    });
+});
+
+export const OrderController = {
+    createOrder,
+    getAllOrder,
+    deleteOrder,
+    updateOrder,
+    verifyPayment,
+    getMeOrder,
+};

@@ -10,7 +10,8 @@ const productRouter = Router();
 
 // Endpoint to create a new product
 productRouter.post(
-    "/create-product",auth(USER_ROLE.admin),
+    "/create-product", 
+    auth(USER_ROLE.admin),
     validateRequest(ProductValidations.createProductValidationSchema), 
     productController.createProduct
 );

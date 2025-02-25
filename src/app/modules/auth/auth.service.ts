@@ -57,6 +57,9 @@ const loginUserWithDB = async (payload: { email: string; password: string }) => 
         config.jwt_access_expires_in as string,
     );
 
+    console.log(token);
+    
+
     return { token };
     
 }
