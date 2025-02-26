@@ -12,23 +12,6 @@ import { orderUtils } from './order.utils';
 import { User } from '../modules/user/user.model';
 // import { User } from '../modules/user/user.model';
 
-const getMeOrderFromDB = async (query: Record<string, unknown>, email: string) => {
-    const orders = await OrderModel.find({})
-        .populate({ path: "user", match: { email } })
-        .populate({ path: "products", populate: { path: "product" } });
-
-    const filteredOrders = orders.filter(order => order.user !== null);
-
-    const orderQuery = new QueryBuilder(
-        OrderModel.find({ _id: { $in: filteredOrders.map(order => order._id) } }),
-        query
-    ).search(["status", "totalPrice"]).filter().sort().paginate().fields();
-
-    return {
-        meta: await orderQuery.countTotal(),
-        result: await orderQuery.modelQuery,
-    };
-};
 const createOrderIntoDB = async (
     payload: { products: { product: string; quantity: number }[] },
     user: JwtPayload,
@@ -156,6 +139,37 @@ const getAllOrderFromDB = async (query: Record<string, unknown>) => {
         result,
     };
 };
+
+const getMeOrderFromDB = async (query: Record<string, unknown>, userId: string) => {
+    if (!userId) {
+        throw new Error("userId is required");
+    }
+
+    const orderQuery = new QueryBuilder(
+        OrderModel.find({ user: userId }) // Directly filter orders by userId
+        .populate({
+            path: "products",
+            populate: {
+                path: "product",
+            },
+        }),
+        query
+    )
+        .search(OrderSearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+
+    const meta = await orderQuery.countTotal();
+    const result = await orderQuery.modelQuery;
+
+    return {
+        meta,
+        result,
+    };
+};
+
 
 const deleteOrderFromDB = async (id: string) => {
     const order = await OrderModel.findByIdAndDelete(id);

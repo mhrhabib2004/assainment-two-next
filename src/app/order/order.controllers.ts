@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import catchAsync from "../utils/catchAsync";
 import sendResponse from "../utils/sendResponse";
 import { OrderService } from "./order.service";
+import AppError from "../errors/AppError";
 
 // Create Order Function
 const createOrder = catchAsync(async (req, res) => {
@@ -49,21 +50,19 @@ const getAllOrder = catchAsync(async (req, res) => {
     });
 });
 
-// get me order 
 const getMeOrder = catchAsync(async (req, res) => {
+    const userId = req.user?.userId; // Ensure this is the correct user ID
 
-    const userEmail = req.user?.email
-    // console.log(user);
-    
-    const result = await OrderService.getMeOrderFromDB(req.query, userEmail);
-    // console.log(result);
+    if (!userId) {
+        throw new AppError(httpStatus.UNAUTHORIZED, "User ID is missing");
+    }
+
+    const result = await OrderService.getMeOrderFromDB(req.query, userId);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: 'All Order get successfully',
-        // meta: result?.meta,
-        // data: result?.result,
+        message: 'User orders retrieved successfully',
         data: result
     });
 });
