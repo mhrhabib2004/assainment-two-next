@@ -2,7 +2,7 @@
 import { Types } from 'mongoose';
 import httpStatus from 'http-status';
 import { JwtPayload } from 'jsonwebtoken';
-import { isValidStatusTransition } from './order.constant';
+import { isValidStatusTransition, OrderSearchableFields } from './order.constant';
 import { TOrder } from './order.interface';
 import OrderModel from './order.model';
 import QueryBuilder from '../Builder/QueryBuilder';
@@ -87,21 +87,21 @@ const createOrderIntoDB = async (
         order_id: order._id,
         currency: "BDT",
         customer_name: name,
-        customer_address: cuser.address || "Sylhet",
+        customer_address: "N/A",
         customer_email: email,
-        customer_phone: cuser.mobile || "01917540405",
-        customer_city: cuser.address || "Sylhet",
+        customer_phone: "N/A",
+        customer_city: "N/A",
         client_ip,
     };
 
     // Log the payment payload (remove or adjust for production)
-    console.log("Payment Payload:", paymentPayload);
+    // console.log("Payment Payload:", paymentPayload);
 
     // Initiate payment and capture the response
     const payment = await orderUtils.makePaymentAsync(paymentPayload);
 
     // Log the payment response (remove or adjust for production)
-    console.log("Payment Response:", payment);
+    // console.log("Payment Response:", payment);
 
     // Check if the payment was successful and update the order's transaction details
     if (payment?.transactionStatus) {
@@ -129,6 +129,33 @@ const createOrderIntoDB = async (
     };
 };
 
+// get All Order
+const getAllOrderFromDB = async (query: Record<string, unknown>) => {
+
+    const orderQuery = new QueryBuilder(OrderModel.find()
+        .populate("user")
+        .populate({
+            path: "products",
+            populate: {
+                path: 'product',
+            },
+        }),
+        query,
+    )
+        .search(OrderSearchableFields)
+        .filter()
+        .sort()
+        .paginate()
+        .fields();
+
+    const meta = await orderQuery.countTotal();
+    const result = await orderQuery.modelQuery;
+
+    return {
+        meta,
+        result,
+    };
+};
 
 const deleteOrderFromDB = async (id: string) => {
     const order = await OrderModel.findByIdAndDelete(id);
@@ -204,8 +231,9 @@ const verifyPayment = async (order_id: string) => {
 // Export all functions
 export const OrderService = {
     createOrderIntoDB,
+    getAllOrderFromDB,
     deleteOrderFromDB,
     updateOrderIntoDB,
     getMeOrderFromDB,
-    verifyPayment, // Add this to the exports
+    verifyPayment, 
 };
