@@ -32,31 +32,42 @@ const verifyPayment = catchAsync(async (req, res) => {
     });
 });
 
-// Get All Orders Function
+// get All order 
 const getAllOrder = catchAsync(async (req, res) => {
+
     const result = await OrderService.getAllOrderFromDB(req.query);
+    // const result = await OrderService.getAllOrderFromDB();
+    // console.log(result);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: 'All orders retrieved successfully',
-        data: result,
+        message: 'All Order get successfully',
+        // meta: result?.meta,
+        // data: result?.result,
+        data: result
     });
 });
 
-// Get My Orders Function
+// get me order 
 const getMeOrder = catchAsync(async (req, res) => {
-    const userEmail = req.user?.email; // Extract email from authenticated user
 
+    const userEmail = req.user?.email
+    // console.log(user);
+    
     const result = await OrderService.getMeOrderFromDB(req.query, userEmail);
+    // console.log(result);
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: 'Your orders retrieved successfully',
-        data: result,
+        message: 'All Order get successfully',
+        // meta: result?.meta,
+        // data: result?.result,
+        data: result
     });
 });
+
 
 // Delete Order Function
 const deleteOrder = catchAsync(async (req, res) => {
