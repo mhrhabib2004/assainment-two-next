@@ -171,11 +171,20 @@ const getMeOrderFromDB = async (query: Record<string, unknown>, userId: string) 
 };
 
 
+// Delete Order Data
 const deleteOrderFromDB = async (id: string) => {
-    const order = await OrderModel.findByIdAndDelete(id);
-    if (!order) throw new AppError(httpStatus.NOT_FOUND, 'This Order is not found!');
-    return order;
+
+    const order = await OrderModel.findById(id);
+
+    // Check blog Exist
+    if (!order) {
+        throw new AppError(httpStatus.NOT_FOUND, 'This Order is not found !');
+    }
+
+    const result = OrderModel.findByIdAndDelete(id)
+    return result;
 };
+
 
 const updateOrderIntoDB = async (id: string, payload: Partial<TOrder>) => {
     const order = await OrderModel.findById(id).populate('products.product');
