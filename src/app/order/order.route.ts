@@ -25,7 +25,7 @@ router.get(
 router.get(
     '/',
     auth(USER_ROLE.admin, USER_ROLE.user), // Admins and users can view orders
-    OrderController.getAllOrder, // Handle get all orders logic
+    OrderController.getAllOrder, 
 );
 
 // Get My Orders Route
