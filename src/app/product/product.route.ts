@@ -23,13 +23,13 @@ productRouter.get("/", productController.getAllProducts);
 productRouter.get("/:productId", productController.getProductById);
 
 // Endpoint to update a product by ID
-productRouter.put(
+productRouter.patch(
     "/:productId",auth(USER_ROLE.admin),
     validateRequest(ProductValidations.updateProductValidationSchema), 
     productController.updateProduct
 );
 
 // Endpoint to delete a product by ID
-productRouter.delete("/:productId", productController.deleteProduct);
+productRouter.patch("/:productId", productController.deleteProduct);
 
 export default productRouter;

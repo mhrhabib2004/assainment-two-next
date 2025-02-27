@@ -9,6 +9,7 @@
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "prettier . --write",
     "build": "react-scripts build"
+    
   },
   "keywords": [],
   "author": "",

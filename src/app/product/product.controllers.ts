@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import ProductModel from "./product.model";
 import catchAsync from "../utils/catchAsync";
 import AppError from "../errors/AppError";
+import QueryBuilder from '../Builder/QueryBuilder';
 
 // Controller to create a new product
 const createProduct = catchAsync(async (req: Request, res: Response) => {
@@ -16,33 +17,26 @@ const createProduct = catchAsync(async (req: Request, res: Response) => {
     });
 });
 
-// Controller to get all products
 const getAllProducts = catchAsync(async (req: Request, res: Response) => {
-    const { searchTerm } = req.query;
-    let filter = {};
-
-    // Apply filter if searchTerm exists
-    if (searchTerm) {
-        filter = {
-            $or: [
-                { name: { $regex: searchTerm, $options: "i" } },
-                { brand: { $regex: searchTerm, $options: "i" } },
-                { category: { $regex: searchTerm, $options: "i" } },
-            ],
-        };
-    }
-
-    // Fetch filtered or all products
-    const products = await ProductModel.find(filter);
-
-    // Response
+    const queryBuilder = new QueryBuilder(ProductModel.find(), req.query)
+      .search(["name", "brand", "category"])
+      .filter()
+      .sort()
+      .paginate()
+      .fields();
+  
+    const products = await queryBuilder.modelQuery;
+    const meta = await queryBuilder.countTotal();
+  
     res.status(httpStatus.OK).json({
-        message: "Products retrieved successfully",
-        success: true,
-        data: products,
+      message: "Products retrieved successfully",
+      success: true,
+      meta,
+      data: products,
     });
 });
 
+export default getAllProducts;
 // Controller to get a specific product by ID
 const getProductById = catchAsync(async (req: Request, res: Response) => {
     const { productId } = req.params;

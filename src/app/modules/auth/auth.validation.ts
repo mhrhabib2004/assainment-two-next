@@ -9,6 +9,16 @@ const loginValidationSchema = z.object({
     }),
 })
 
+const UpdateUserValidationSchema = z.object({
+    body: z.object({
+        name: z.string().optional(),
+        isdeactive: z.boolean().optional(),
+        role: z.enum(['admin' , 'user']).optional(),
+
+    }),
+});
+
 export const AuthValidation = {
     loginValidationSchema,
+    UpdateUserValidationSchema
 }
